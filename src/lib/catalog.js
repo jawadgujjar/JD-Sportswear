@@ -96,6 +96,15 @@ export async function getCatalogMenu() {
   }));
 }
 
+// Flat list used by the navbar search.
+export async function getSearchIndex() {
+  return [
+    ...categories.map((c) => ({ label: c.name, type: "Category", href: `/shop/${c.slug}` })),
+    ...subcategories.map((s) => ({ label: s.name, type: "Collection", href: `/shop/${s.categorySlug}/${s.slug}` })),
+    ...products.map((p) => ({ label: p.name, type: "Product", href: `/shop/${p.categorySlug}/${p.subcategorySlug}/${p.slug}` })),
+  ];
+}
+
 export const categoryUrl = (categorySlug) => `/shop/${categorySlug}`;
 export const subcategoryUrl = (categorySlug, subcategorySlug) => `/shop/${categorySlug}/${subcategorySlug}`;
 export const productUrl = (p) => `/shop/${p.categorySlug}/${p.subcategorySlug}/${p.slug}`;

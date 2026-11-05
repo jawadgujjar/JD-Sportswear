@@ -1,7 +1,8 @@
 import { Geist, Oswald } from "next/font/google";
+import AnnouncementBar from "@/components/navbar/AnnouncementBar";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
-import { getCatalogMenu } from "@/lib/catalog";
+import { getCatalogMenu, getSearchIndex } from "@/lib/catalog";
 import "@/styles/globals.css";
 
 const geistSans = Geist({
@@ -21,12 +22,14 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const menu = await getCatalogMenu();
+  const [menu, searchIndex] = await Promise.all([getCatalogMenu(), getSearchIndex()]);
 
   return (
     <html lang="en" className={`${geistSans.variable} ${oswald.variable} h-full scroll-smooth antialiased`}>
-      <body className="flex min-h-full flex-col">
-        <Navbar menu={menu} />
+      {/* suppressHydrationWarning: browser extensions (e.g. ColorZilla) add attributes to <body> */}
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
+        <AnnouncementBar />
+        <Navbar menu={menu} searchIndex={searchIndex} />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>
