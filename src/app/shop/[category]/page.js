@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SubcategoryNav from "@/components/categories/SubcategoryNav";
 import ProductGrid from "@/components/products/ProductGrid";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import PageHeader from "@/components/ui/PageHeader";
 import { getCategories, getCategory, getSubcategories, getProducts, subcategoryUrl } from "@/lib/catalog";
 
@@ -19,7 +21,16 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function CategoryPage({ params }) {
+// params are read inside Suspense so client navigations can show the skeleton instantly.
+export default function CategoryPage({ params }) {
+  return (
+    <Suspense fallback={<PageSkeleton />}>
+      <CategoryContent params={params} />
+    </Suspense>
+  );
+}
+
+async function CategoryContent({ params }) {
   const { category: categorySlug } = await params;
   const category = await getCategory(categorySlug);
   if (!category) notFound();
